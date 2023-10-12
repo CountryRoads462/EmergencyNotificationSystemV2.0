@@ -1,6 +1,6 @@
-package com.andrew.ens.user_states.application.port.in;
+package com.andrew.ens.user_status.application.port.in;
 
-import com.andrew.ens.user_states.domain.Status;
+import com.andrew.ens.user_status.domain.Status;
 
 import java.util.concurrent.ConcurrentHashMap;
 

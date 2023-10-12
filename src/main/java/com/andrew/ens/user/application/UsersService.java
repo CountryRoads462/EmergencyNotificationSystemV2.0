@@ -2,6 +2,7 @@ package com.andrew.ens.user.application;
 
 import com.andrew.ens.user.adapter.out.persistence.UsersRepository;
 import com.andrew.ens.user.application.port.in.CreateUserUseCase;
+import com.andrew.ens.user.application.port.in.GetInfoUserHasAnyTemplatesUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,8 @@ import org.telegram.telegrambots.meta.api.objects.User;
 @Service
 @RequiredArgsConstructor
 public class UsersService implements
-        CreateUserUseCase {
+        CreateUserUseCase,
+        GetInfoUserHasAnyTemplatesUseCase {
 
     @Autowired
     private final UsersRepository usersRepo;
@@ -28,7 +30,8 @@ public class UsersService implements
         );
     }
 
-    public boolean userExistsById(Update update) {
-        return usersRepo.existsById(update.getMessage().getFrom().getId());
+    @Override
+    public boolean userHasAnyTemplates(long userId) {
+        return usersRepo.getNumberOfTemplatesById(userId) != 0;
     }
 }

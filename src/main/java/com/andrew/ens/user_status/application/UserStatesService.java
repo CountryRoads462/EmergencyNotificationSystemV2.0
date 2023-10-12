@@ -1,10 +1,10 @@
-package com.andrew.ens.user_states.application;
+package com.andrew.ens.user_status.application;
 
-import com.andrew.ens.user_states.adapter.out.persistence.UserStatesRepository;
-import com.andrew.ens.user_states.adapter.out.persistence.UserStatus;
-import com.andrew.ens.user_states.application.port.in.GetUserStatesUseCase;
-import com.andrew.ens.user_states.application.port.in.SaveUserStatusUseCase;
-import com.andrew.ens.user_states.domain.Status;
+import com.andrew.ens.user_status.adapter.out.persistence.UserStatesRepository;
+import com.andrew.ens.user_status.adapter.out.persistence.UserStatus;
+import com.andrew.ens.user_status.application.port.in.GetUserStatesUseCase;
+import com.andrew.ens.user_status.application.port.in.SaveUserStatusUseCase;
+import com.andrew.ens.user_status.domain.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

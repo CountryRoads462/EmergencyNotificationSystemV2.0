@@ -30,4 +30,7 @@ public class ENSUser {
 
     @Column(name = "chosen_template_id")
     private int chosenTemplateId;
+
+    @Column(name = "number_of_templates")
+    private int numberOfTemplates = 0;
 }

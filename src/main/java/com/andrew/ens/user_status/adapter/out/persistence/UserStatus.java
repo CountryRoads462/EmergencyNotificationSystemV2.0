@@ -1,6 +1,6 @@
-package com.andrew.ens.user_states.adapter.out.persistence;
+package com.andrew.ens.user_status.adapter.out.persistence;
 
-import com.andrew.ens.user_states.domain.Status;
+import com.andrew.ens.user_status.domain.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
