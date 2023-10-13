@@ -1,6 +1,5 @@
 package com.andrew.ens.template.application;
 
-import com.andrew.ens.template.adapter.out.persistence.Template;
 import com.andrew.ens.template.adapter.out.persistence.TemplatesRepository;
 import com.andrew.ens.template.application.port.in.CreateIncompleteTemplateUseCase;
 import com.andrew.ens.template.application.port.in.SetTemplateTextUseCase;
@@ -16,15 +15,15 @@ public class TemplatesService implements
     private final TemplatesRepository templatesRepo;
 
     @Override
-    public void createIncompleteTemplate(String templateName, long userId) {
-        templatesRepo.save(Template.builder()
-                .name(templateName)
-                .ownerId(userId)
-                .build());
+    public int createIncompleteTemplate(String templateName, long userId) {
+        return templatesRepo.createIncompleteTemplate(
+                templateName,
+                userId
+        );
     }
 
     @Override
-    public void setTemplateText(String text, long userId) {
-        templatesRepo.setText(text, userId);
+    public void setTemplateText(int templateId, String text) {
+        templatesRepo.setText(text, templateId);
     }
 }
