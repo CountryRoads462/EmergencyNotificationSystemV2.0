@@ -1,7 +1,74 @@
 package com.andrew.ens.bot;
 
-import com.andrew.ens.bot.buttons.CreateTemplateButton;
+import com.andrew.ens.bot.buttons.*;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+@Component
 public class BotButtons {
-    public static final CreateTemplateButton CREATE_TEMPLATE_BUTTON = CreateTemplateButton.CREATE_TEMPLATE_BUTTON;
+    public static final InlineKeyboardButton ADD_CONTACT_BUTTON
+            = InlineKeyboardButton.builder()
+            .text("Add contact")
+            .callbackData(CallBackData.ADD_CONTACT_CALL_BACK)
+            .build();
+
+    public static final InlineKeyboardButton CREATE_TEMPLATE_BUTTON
+            = InlineKeyboardButton.builder()
+            .text("Create")
+            .callbackData(CallBackData.CREATE_TEMPLATE_CALL_BACK)
+            .build();
+
+    public static final InlineKeyboardButton SETTING_BUTTON
+            = InlineKeyboardButton.builder()
+            .text("Settings")
+            .callbackData(CallBackData.SETTINGS_CALL_BACK)
+            .build();
+
+    public static final InlineKeyboardButton SEND_EMERGENCY_MESSAGE
+            = InlineKeyboardButton.builder()
+            .text("Tap to send emergency message")
+            .callbackData(CallBackData.SEND_EMERGENCY_MESSAGE_CALL_BACK)
+            .build();
+
+    public static final InlineKeyboardButton CHOOSE_TEMPLATE_BUTTON
+            = InlineKeyboardButton.builder()
+            .text("Choose template")
+            .callbackData(CallBackData.CHOOSE_TEMPLATE_CALL_BACK)
+            .build();
+
+    public static final InlineKeyboardButton DELETE_TEMPLATE_BUTTON
+            = InlineKeyboardButton.builder()
+            .text("Delete template")
+            .callbackData(CallBackData.DELETE_TEMPLATE_CALL_BACK)
+            .build();
+
+    public static final InlineKeyboardButton EDIT_TEMPLATE_BUTTON
+            = InlineKeyboardButton.builder()
+            .text("Edit template")
+            .callbackData(CallBackData.EDIT_TEMPLATE_CALL_BACK)
+            .build();
+
+    public final static InlineKeyboardButton BACK_TO_MENU_BUTTON
+            = InlineKeyboardButton.builder()
+            .text("Back")
+            .callbackData(CallBackData.BACK_TO_MENU_CALL_BACK)
+            .build();
+
+    public static final InlineKeyboardButton DELETE_CONTACT_BUTTON
+            = InlineKeyboardButton.builder()
+            .text("Delete contact")
+            .callbackData(CallBackData.DELETE_CONTACT_CALL_BACK)
+            .build();
+
+    public static final InlineKeyboardButton DELETE_ALL_CONTACTS_BUTTON
+            = InlineKeyboardButton.builder()
+            .text("Delete all contacts")
+            .callbackData(CallBackData.DELETE_ALL_CONTACTS_CALL_BACK)
+            .build();
+
+    public static final InlineKeyboardButton CHANGE_THE_TEMPLATE_NAME_BUTTON
+            = InlineKeyboardButton.builder()
+            .text("Change the template name")
+            .callbackData(CallBackData.CHANGE_THE_TEMPLATE_NAME_CALL_BACK)
+            .build();
 }

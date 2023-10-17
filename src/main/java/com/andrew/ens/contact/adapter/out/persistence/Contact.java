@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.Getter;
 
 @Entity
+@Getter
 @Builder
 @Table(name = "contacts")
 public class Contact {
@@ -22,4 +24,7 @@ public class Contact {
 
     @Column(name = "phone_number")
     private String phoneNumber;
+
+    @Column(name = "template_id")
+    private int templateId;
 }

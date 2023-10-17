@@ -1,33 +1,54 @@
 package com.andrew.ens.contact.application;
 
+import com.andrew.ens.contact.adapter.out.persistence.Contact;
 import com.andrew.ens.contact.adapter.out.persistence.ContactsRepository;
-import com.andrew.ens.contact.application.port.in.CreateIncompleteContactUseCase;
-import com.andrew.ens.contact.application.port.in.SetContactEmailUseCase;
-import com.andrew.ens.contact.application.port.in.SetContactPhoneNumberUseCase;
+import com.andrew.ens.contact.application.port.in.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ContactsService implements
         CreateIncompleteContactUseCase,
         SetContactEmailUseCase,
-        SetContactPhoneNumberUseCase {
+        SetContactPhoneNumberUseCase,
+        DeleteAllContactsUseCase,
+        GetAllContactsByTemplateIdUseCase,
+        DeleteContactByIdUseCase {
 
-    private final ContactsRepository contactsRepository;
+    @Autowired
+    private final ContactsRepository contactsRepo;
 
     @Override
     public int createIncompleteContact(String name) {
-        return contactsRepository.createIncompleteContact(name);
+        return contactsRepo.createIncompleteContact(name);
     }
 
     @Override
     public void setContactEmail(int contactId, String email) {
-        contactsRepository.setContactEmail(contactId, email);
+        contactsRepo.setContactEmail(contactId, email);
     }
 
     @Override
     public void setContactPhoneNumber(int contactId, String phoneNumber) {
-        contactsRepository.setContactPhoneNumber(contactId, phoneNumber);
+        contactsRepo.setContactPhoneNumber(contactId, phoneNumber);
+    }
+
+    @Override
+    public void deleteAllContacts() {
+        contactsRepo.deleteAllContacts();
+    }
+
+    @Override
+    public List<Contact> getAllContactsByTemplateId(int templateId) {
+        return contactsRepo.getAllContactsByTemplateId(templateId);
+    }
+
+    @Override
+    public void deleteContactById(int contactId) {
+        contactsRepo.deleteContactById(contactId);
     }
 }

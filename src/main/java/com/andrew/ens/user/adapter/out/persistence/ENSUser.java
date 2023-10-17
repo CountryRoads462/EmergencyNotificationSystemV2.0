@@ -32,5 +32,5 @@ public class ENSUser {
     private int chosenTemplateId;
 
     @Column(name = "number_of_templates")
-    private int numberOfTemplates = 0;
+    private int numberOfTemplates;
 }
