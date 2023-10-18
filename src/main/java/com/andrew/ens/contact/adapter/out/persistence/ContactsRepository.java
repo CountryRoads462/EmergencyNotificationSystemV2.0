@@ -14,22 +14,21 @@ public interface ContactsRepository extends CrudRepository<Contact, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE contacts" +
-            "SET email = :email" +
-            "WHERE contact_id = :contact_id", nativeQuery = true)
-    void setContactEmail(@Param("contact_id") int contactId, String email);
+    @Query(value = "UPDATE contacts " +
+            "SET email = :email " +
+            "WHERE id = :contactId", nativeQuery = true)
+    void setContactEmail(int contactId, String email);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE contacts" +
-            "SET phone_number = :phone_number" +
-            "WHERE contact_id = :contact_id", nativeQuery = true)
-    void setContactPhoneNumber(@Param("contact_id") int contactId, @Param("phone_number") String phoneNumber);
+    @Query(value = "UPDATE contacts " +
+            "SET phone_number = :phoneNumber " +
+            "WHERE id= :contactId", nativeQuery = true)
+    void setContactPhoneNumber(int contactId, String phoneNumber);
 
-    @Modifying
     @Transactional
-    @Query(value = "INSERT INTO contacts(name)" +
-            "VALUES(:name)" +
+    @Query(value = "INSERT INTO contacts(name) " +
+            "VALUES(:name) " +
             "RETURNING id", nativeQuery = true)
     int createIncompleteContact(String name);
 
@@ -38,11 +37,11 @@ public interface ContactsRepository extends CrudRepository<Contact, Integer> {
     @Query(value = "DELETE FROM contacts WHERE id > 0", nativeQuery = true)
     void deleteAllContacts();
 
-    @Query(value = "SELECT * FROM contacts WHERE template_id = :template_id", nativeQuery = true)
-    List<Contact> getAllContactsByTemplateId(@Param("template_id") int templateId);
+    @Query(value = "SELECT * FROM contacts WHERE template_id = :templateId", nativeQuery = true)
+    List<Contact> getAllContactsByTemplateId(int templateId);
 
     @Modifying
     @Transactional
-    @Query(value = "DELETE FROM contacts WHERE id = :contact_id", nativeQuery = true)
-    void deleteContactById(@Param("contact_id") int contactId);
+    @Query(value = "DELETE FROM contacts WHERE id = :contactId", nativeQuery = true)
+    void deleteContactById(int contactId);
 }

@@ -1,15 +1,14 @@
 package com.andrew.ens.user.application;
 
 import com.andrew.ens.user.adapter.out.persistence.UsersRepository;
-import com.andrew.ens.user.application.port.in.CreateUserUseCase;
-import com.andrew.ens.user.application.port.in.GetInfoUserHasAnyTemplatesUseCase;
-import com.andrew.ens.user.application.port.in.GetInfoUserHasChosenTemplateUseCase;
-import com.andrew.ens.user.application.port.in.SetChosenTemplateUseCase;
+import com.andrew.ens.user.application.port.in.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +16,8 @@ public class UsersService implements
         CreateUserUseCase,
         GetInfoUserHasAnyTemplatesUseCase,
         GetInfoUserHasChosenTemplateUseCase,
-        SetChosenTemplateUseCase {
+        SetChosenTemplateUseCase,
+        GetChosenTemplateIdUseCase {
 
     @Autowired
     private final UsersRepository usersRepo;
@@ -52,5 +52,10 @@ public class UsersService implements
     @Override
     public void setChosenTemplate(long userId, int templateId) {
         usersRepo.setChosenTemplate(userId, templateId);
+    }
+
+    @Override
+    public Optional<Integer> getChosenTemplateId(long userId) {
+        return usersRepo.getChosenTemplateId(userId);
     }
 }

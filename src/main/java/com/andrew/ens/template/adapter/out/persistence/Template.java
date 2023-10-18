@@ -5,11 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
-
 @Entity
 @Getter
-@Builder
 @Table(name = "templates")
 public class Template {
 

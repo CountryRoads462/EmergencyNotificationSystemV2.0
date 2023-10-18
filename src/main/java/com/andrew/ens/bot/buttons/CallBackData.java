@@ -8,8 +8,10 @@ public class CallBackData {
     public final static String CHOOSE_TEMPLATE_CALL_BACK = "$choose.template";
     public final static String DELETE_TEMPLATE_CALL_BACK = "$delete.template";
     public final static String EDIT_TEMPLATE_CALL_BACK = "$edit.template";
-    public final static String BACK_TO_MENU_CALL_BACK = "$back.to.menu";
+    public final static String BACK_CALL_BACK = "$back";
     public final static String DELETE_CONTACT_CALL_BACK = "$delete.contact";
     public final static String DELETE_ALL_CONTACTS_CALL_BACK = "$delete.all.contacts";
     public final static String CHANGE_THE_TEMPLATE_NAME_CALL_BACK = "$change.the.template.name";
+    public final static String CANCEL_CALL_BACK = "$cancel";
+    public final static String CONFIRM_CALL_BACK = "$confirm";
 }

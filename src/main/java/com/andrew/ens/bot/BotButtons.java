@@ -4,18 +4,15 @@ import com.andrew.ens.bot.buttons.*;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import static com.andrew.ens.bot.buttons.CallBackData.*;
+
 @Component
 public class BotButtons {
-    public static final InlineKeyboardButton ADD_CONTACT_BUTTON
-            = InlineKeyboardButton.builder()
-            .text("Add contact")
-            .callbackData(CallBackData.ADD_CONTACT_CALL_BACK)
-            .build();
 
-    public static final InlineKeyboardButton CREATE_TEMPLATE_BUTTON
+    public static final InlineKeyboardButton SEND_EMERGENCY_MESSAGE
             = InlineKeyboardButton.builder()
-            .text("Create")
-            .callbackData(CallBackData.CREATE_TEMPLATE_CALL_BACK)
+            .text("Tap to send emergency message")
+            .callbackData(CallBackData.SEND_EMERGENCY_MESSAGE_CALL_BACK)
             .build();
 
     public static final InlineKeyboardButton SETTING_BUTTON
@@ -24,10 +21,23 @@ public class BotButtons {
             .callbackData(CallBackData.SETTINGS_CALL_BACK)
             .build();
 
-    public static final InlineKeyboardButton SEND_EMERGENCY_MESSAGE
+
+    public static final InlineKeyboardButton CREATE_TEMPLATE_BUTTON
             = InlineKeyboardButton.builder()
-            .text("Tap to send emergency message")
-            .callbackData(CallBackData.SEND_EMERGENCY_MESSAGE_CALL_BACK)
+            .text("Create template")
+            .callbackData(CREATE_TEMPLATE_CALL_BACK)
+            .build();
+
+    public static final InlineKeyboardButton CANCEL_BUTTON
+            = InlineKeyboardButton.builder()
+            .text("Cancel")
+            .callbackData(CANCEL_CALL_BACK)
+            .build();
+
+    public static final InlineKeyboardButton CONFIRM_BUTTON
+            = InlineKeyboardButton.builder()
+            .text("Confirm")
+            .callbackData(CONFIRM_CALL_BACK)
             .build();
 
     public static final InlineKeyboardButton CHOOSE_TEMPLATE_BUTTON
@@ -48,10 +58,16 @@ public class BotButtons {
             .callbackData(CallBackData.EDIT_TEMPLATE_CALL_BACK)
             .build();
 
-    public final static InlineKeyboardButton BACK_TO_MENU_BUTTON
+    public final static InlineKeyboardButton BACK_BUTTON
             = InlineKeyboardButton.builder()
             .text("Back")
-            .callbackData(CallBackData.BACK_TO_MENU_CALL_BACK)
+            .callbackData(CallBackData.BACK_CALL_BACK)
+            .build();
+
+    public static final InlineKeyboardButton ADD_CONTACT_BUTTON
+            = InlineKeyboardButton.builder()
+            .text("Add contact")
+            .callbackData(CallBackData.ADD_CONTACT_CALL_BACK)
             .build();
 
     public static final InlineKeyboardButton DELETE_CONTACT_BUTTON

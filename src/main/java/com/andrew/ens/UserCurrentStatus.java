@@ -11,7 +11,6 @@ import lombok.ToString;
 @ToString
 public class UserCurrentStatus {
     private Status status;
-    private int templateCreationId;
+    private Integer templateCreationId;
     private int contactCreationId;
-    private int messageIdToDelete;
 }

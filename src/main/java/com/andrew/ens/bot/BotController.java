@@ -1,19 +1,15 @@
 package com.andrew.ens.bot;
 
+import com.andrew.ens.Status;
+import com.andrew.ens.UserCurrentStatus;
 import com.andrew.ens.contact.adapter.out.persistence.Contact;
 import com.andrew.ens.contact.application.port.in.*;
 import com.andrew.ens.template.adapter.out.persistence.Template;
-import com.andrew.ens.template.application.port.in.CreateIncompleteTemplateUseCase;
-import com.andrew.ens.template.application.port.in.DeleteTemplateByIdUseCase;
-import com.andrew.ens.template.application.port.in.GetTemplateTextUseCase;
-import com.andrew.ens.template.application.port.in.GetTemplatesByOwnerIdUseCase;
-import com.andrew.ens.template.application.port.in.SetTemplateTextUseCase;
+import com.andrew.ens.template.application.port.in.*;
 import com.andrew.ens.user.application.port.in.CreateUserUseCase;
-import com.andrew.ens.user.application.port.in.GetInfoUserHasAnyTemplatesUseCase;
+import com.andrew.ens.user.application.port.in.GetChosenTemplateIdUseCase;
 import com.andrew.ens.user.application.port.in.GetInfoUserHasChosenTemplateUseCase;
 import com.andrew.ens.user.application.port.in.SetChosenTemplateUseCase;
-import com.andrew.ens.Status;
-import com.andrew.ens.UserCurrentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +18,6 @@ import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -33,36 +28,21 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.andrew.ens.Status.*;
-import static com.andrew.ens.bot.BotKeyboards.EDIT_TEMPLATES_KEYBOARD;
-import static com.andrew.ens.bot.BotKeyboards.MENU_KEYBOARD;
-import static com.andrew.ens.bot.BotKeyboards.SETTINGS_KEYBOARD;
-import static com.andrew.ens.bot.BotMessages.CREATE_TEMPLATE_OR_ADD_CONTACT_MESSAGE;
-import static com.andrew.ens.bot.BotMessages.SELECT_ONE_OR_MORE_OPTIONS_MESSAGE;
-import static com.andrew.ens.bot.BotMessages.CREATE_CONTACT_EMAIL_MESSAGE;
-import static com.andrew.ens.bot.BotMessages.CREATE_CONTACT_NAME_MESSAGE;
-import static com.andrew.ens.bot.BotMessages.CREATE_CONTACT_PHONE_NUMBER_MESSAGE;
-import static com.andrew.ens.bot.BotMessages.TEMPLATE_CREATE_NAME_MESSAGE;
-import static com.andrew.ens.bot.BotMessages.TEMPLATE_CREATE_TEXT_MESSAGE;
-import static com.andrew.ens.bot.buttons.CallBackData.ADD_CONTACT_CALL_BACK;
-import static com.andrew.ens.bot.buttons.CallBackData.BACK_TO_MENU_CALL_BACK;
-import static com.andrew.ens.bot.buttons.CallBackData.CHANGE_THE_TEMPLATE_NAME_CALL_BACK;
-import static com.andrew.ens.bot.buttons.CallBackData.CHOOSE_TEMPLATE_CALL_BACK;
-import static com.andrew.ens.bot.buttons.CallBackData.CREATE_TEMPLATE_CALL_BACK;
-import static com.andrew.ens.bot.buttons.CallBackData.DELETE_ALL_CONTACTS_CALL_BACK;
-import static com.andrew.ens.bot.buttons.CallBackData.DELETE_CONTACT_CALL_BACK;
-import static com.andrew.ens.bot.buttons.CallBackData.DELETE_TEMPLATE_CALL_BACK;
-import static com.andrew.ens.bot.buttons.CallBackData.EDIT_TEMPLATE_CALL_BACK;
-import static com.andrew.ens.bot.buttons.CallBackData.SEND_EMERGENCY_MESSAGE_CALL_BACK;
-import static com.andrew.ens.bot.buttons.CallBackData.SETTINGS_CALL_BACK;
+import static com.andrew.ens.bot.BotButtons.BACK_BUTTON;
+import static com.andrew.ens.bot.BotKeyboards.*;
+import static com.andrew.ens.bot.BotMessages.*;
+import static com.andrew.ens.bot.buttons.CallBackData.*;
 
 @Configuration
 @RequiredArgsConstructor
 public class BotController {
 
     private final CreateUserUseCase createUserUseCase;
+    private final GetChosenTemplateIdUseCase getChosenTemplateIdUseCase;
     private final GetInfoUserHasChosenTemplateUseCase getInfoUserHasChosenTemplateUseCase;
     private final SetChosenTemplateUseCase setChosenTemplateUseCase;
 
@@ -71,6 +51,8 @@ public class BotController {
     private final GetTemplateTextUseCase getTemplateTextUseCase;
     private final GetTemplatesByOwnerIdUseCase getTemplatesByOwnerIdUseCase;
     private final DeleteTemplateByIdUseCase deleteTemplateByIdUseCase;
+    private final GetTemplateByIdUseCase getTemplateByIdUseCase;
+    private final GetInfoTemplateExistsByNameAndOwnerIdUseCase getInfoTemplateExistsByNameAndOwnerIdUseCase;
 
     private final CreateIncompleteContactUseCase createIncompleteContactUseCase;
     private final SetContactEmailUseCase setContactEmailUseCase;
@@ -79,15 +61,13 @@ public class BotController {
     private final GetAllContactsByTemplateIdUseCase getAllContactsByTemplateIdUseCase;
     private final DeleteContactByIdUseCase deleteContactByIdUseCase;
 
-    private ConcurrentHashMap<Long, UserCurrentStatus> userStates;
+    private final ConcurrentHashMap<Long, UserCurrentStatus> userStates = new ConcurrentHashMap<>();
 
     @Bean
     TelegramLongPollingBot bot(
             @Value("${app.telegram.token}") String botToken,
             @Value("${app.telegram.username}") String botUsername
     ) throws TelegramApiException {
-        userStates = new ConcurrentHashMap<>();
-
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         TelegramLongPollingBot bot = new TelegramLongPollingBot(botToken) {
 
@@ -108,18 +88,11 @@ public class BotController {
 
                 if (!userStates.containsKey(userId)) {
                     createUserUseCase.createUser(update);
-                    sendKeyboard(userId, "Ef", MENU_KEYBOARD);
+
                     setUserStatus(userId, MAIN_MENU_WAITING);
                 }
 
                 System.out.println(userStates.get(userId));
-
-                DeleteMessage deleteMessage = DeleteMessage.builder()
-                        .messageId(userStates.get(userId).getMessageIdToDelete())
-                        .chatId(userId)
-                        .build();
-
-                execute(deleteMessage);
 
                 action(update, userId);
             }
@@ -136,52 +109,124 @@ public class BotController {
                     text = callbackQuery.getData();
                 }
 
+                System.out.println(text);
+
                 switch (userStates.get(userId).getStatus()) {
                     case MAIN_MENU_WAITING -> {
                         switch (text) {
                             case SEND_EMERGENCY_MESSAGE_CALL_BACK -> {
                                 sendText(userId, "Send emergency message");
+                                sendKeyboard(userId, MAIN_MENU_KEYBOARD_TEXT, MAIN_MENU_KEYBOARD);
                             }
                             case SETTINGS_CALL_BACK -> {
+                                sendKeyboard(userId, SETTINGS_KEYBOARD_TEXT, SETTINGS_KEYBOARD);
                                 setUserStatus(userId, SETTINGS_WAITING);
-                                sendKeyboard(userId, "Ed", SETTINGS_KEYBOARD);
                             }
-                            default -> {
-                                sendText(userId, "Chose, send or settings");
-                            }
+                            default -> sendMainMenuKeyboard(userId);
                         }
                     }
-                    case TEMPLATE_CREATE_NAME_WAITING -> {
-                        if (text.matches("\\w{1,16}")) {
-                            int templateId = createIncompleteTemplateUseCase
-                                    .createIncompleteTemplate(text, userId);
+                    case SETTINGS_WAITING -> {
+                        InlineKeyboardMarkup allTemplatesKeyboard
+                                = getAllTemplatesKeyboard(userId);
 
-                            setUserTemplateCreationId(userId, templateId);
+                        switch (text) {
+                            case CREATE_TEMPLATE_CALL_BACK -> {
+                                sendKeyboard(userId, TEMPLATE_CREATE_NAME_MESSAGE, CANCEL_KEYBOARD);
+                                setUserStatus(userId, CREATE_TEMPLATE_NAME_WAITING);
+                            }
+                            case CHOOSE_TEMPLATE_CALL_BACK -> {
+                                sendKeyboard(userId, "Select one from the list", allTemplatesKeyboard);
+                                setUserStatus(userId, SETTINGS_CHOOSE_TEMPLATE_WAITING);
+                            }
+                            case DELETE_TEMPLATE_CALL_BACK -> {
+                                sendKeyboard(userId, "Select the one you want to delete", allTemplatesKeyboard);
+                                setUserStatus(userId, SETTINGS_DELETE_TEMPLATE_WAITING);
+                            }
+                            case EDIT_TEMPLATE_CALL_BACK -> {
+                                sendKeyboard(userId, "Select one from the list", allTemplatesKeyboard);
+                                setUserStatus(userId, SETTINGS_EDIT_TEMPLATE_CHOSE_TEMPLATE_WAITING);
+                            }
+                            case BACK_CALL_BACK -> {
+                                sendMainMenuKeyboard(userId);
+                                setUserStatus(userId, MAIN_MENU_WAITING);
+                            }
+                            default -> sendKeyboard(userId, SETTINGS_KEYBOARD_TEXT, SETTINGS_KEYBOARD);
+                        }
+                    }
+                    case SETTINGS_EDIT_TEMPLATE_CHOSE_TEMPLATE_WAITING -> {
+                        if (text.equals(BACK_CALL_BACK)) {
+                            sendKeyboard(userId, SETTINGS_KEYBOARD_TEXT, SETTINGS_KEYBOARD);
+                            setUserStatus(userId, SETTINGS_WAITING);
+                            break;
+                        }
 
-                            setUserStatus(userId, TEMPLATE_CREATE_TEXT_WAITING);
-                            sendText(userId, TEMPLATE_CREATE_TEXT_MESSAGE);
+                        if (update.hasCallbackQuery()) {
+                            userStates.get(userId).setTemplateCreationId(Integer.parseInt(text));
+
+                            sendKeyboard(userId, "Edit template", EDIT_TEMPLATES_KEYBOARD);
+                            setUserStatus(userId, EDIT_TEMPLATES_WAITING);
 
                         } else {
-                            sendText(userId, TEMPLATE_CREATE_NAME_MESSAGE);
+                            InlineKeyboardMarkup allTemplatesKeyboard
+                                    = getAllTemplatesKeyboard(userId);
+
+                            sendKeyboard(userId, "Select one from the list", allTemplatesKeyboard);
+                            setUserStatus(userId, SETTINGS_EDIT_TEMPLATE_CHOSE_TEMPLATE_WAITING);
                         }
                     }
-                    case TEMPLATE_CREATE_TEXT_WAITING -> {
-                        if (text.matches("\\W{1,128}") &&
-                                message.isUserMessage()) {
-                            int templateId = userStates.get(userId).getTemplateCreationId();
+                    case CREATE_TEMPLATE_NAME_WAITING -> {
+                        if (text.equals(CANCEL_CALL_BACK)) {
+                            sendKeyboard(userId, SETTINGS_KEYBOARD_TEXT, SETTINGS_KEYBOARD);
+                            setUserStatus(userId, SETTINGS_WAITING);
+                            break;
+                        }
 
-                            setTemplateTextUseCase.setTemplateText(templateId, text);
+                        if (getInfoTemplateExistsByNameAndOwnerIdUseCase
+                                .getInfoTemplateExistsByNameAndOwnerId(userId, text)) {
+                            sendText(userId, "You already have a template with this name");
+                            break;
+                        }
 
-                            setUserStatus(userId, TEMPLATE_CREATE_CONTACT_NAME_WAITING);
-                            sendText(userId, CREATE_CONTACT_NAME_MESSAGE);
+                        if (text.matches(".{1,16}")) {
+                            int templateId = createIncompleteTemplateUseCase
+                                    .createIncompleteTemplate(text, userId);
+                            setUserTemplateCreationId(userId, templateId);
+
+
+                            sendKeyboard(userId, TEMPLATE_CREATE_TEXT_MESSAGE, CANCEL_KEYBOARD);
+                            setUserStatus(userId, CREATE_TEMPLATE_TEXT_WAITING);
+
+                        } else {
+                            sendKeyboard(userId, TEMPLATE_CREATE_NAME_MESSAGE, CANCEL_KEYBOARD);
+                        }
+                    }
+                    case CREATE_TEMPLATE_TEXT_WAITING -> {
+                        if (text.equals(CANCEL_CALL_BACK)) {
+                            deleteTemplateByIdUseCase.deleteTemplateById(
+                                    userStates.get(userId).getTemplateCreationId()
+                            );
+
+                            sendKeyboard(userId, SETTINGS_KEYBOARD_TEXT, SETTINGS_KEYBOARD);
+                            setUserStatus(userId, SETTINGS_WAITING);
+                            break;
+                        }
+
+                        if (text.matches(".{1,128}")) {
+                            setTemplateTextUseCase.setTemplateText(
+                                    userStates.get(userId).getTemplateCreationId(),
+                                    text
+                            );
+
+                            sendText(userId, CREATE_TEMPLATE_CREATED_MESSAGE);
+                            sendKeyboard(userId, SETTINGS_KEYBOARD_TEXT, SETTINGS_KEYBOARD);
+                            setUserStatus(userId, SETTINGS_WAITING);
 
                         } else {
                             sendText(userId, TEMPLATE_CREATE_TEXT_MESSAGE);
                         }
                     }
                     case TEMPLATE_CREATE_CONTACT_NAME_WAITING -> {
-                        if (text.matches("\\W{1,16}") &&
-                                message.isUserMessage()) {
+                        if (text.matches("\\w{1,16}")) {
                             int contactId = createIncompleteContactUseCase
                                     .createIncompleteContact(text);
 
@@ -195,8 +240,7 @@ public class BotController {
                         }
                     }
                     case TEMPLATE_CREATE_CONTACT_EMAIL_WAITING -> {
-                        if (text.matches("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,6}$") &&
-                                message.isUserMessage()) {
+                        if (text.matches("\\w+@\\w+")) {
                             int contactId = userStates.get(userId).getContactCreationId();
 
                             setContactEmailUseCase
@@ -210,8 +254,7 @@ public class BotController {
                         }
                     }
                     case TEMPLATE_CREATE_CONTACT_PHONE_NUMBER_WAITING -> {
-                        if (text.matches("[0-9-+ ]+") &&
-                                message.isUserMessage()) {
+                        if (text.matches("[0-9-+ ]+")) {
                             int contactId = userStates.get(userId).getContactCreationId();
 
                             int templateId = userStates.get(userId).getTemplateCreationId();
@@ -226,6 +269,7 @@ public class BotController {
                             }
 
                             setUserStatus(userId, TEMPLATE_CREATE_CONTACT_WAITING);
+                            sendKeyboard(userId, "EF", CREATE_TEMPLATE_KEYBOARD);
 
                         } else {
                             sendText(userId, CREATE_CONTACT_PHONE_NUMBER_MESSAGE);
@@ -244,7 +288,7 @@ public class BotController {
                                         .getTemplateText(templateId);
 
                                 sendText(userId, templateText);
-                                sendKeyboard(userId, "Ef", MENU_KEYBOARD);
+                                sendKeyboard(userId, "Ef", MAIN_MENU_KEYBOARD);
                                 setUserStatus(userId, MAIN_MENU_WAITING);
                             }
                             default -> {
@@ -252,70 +296,58 @@ public class BotController {
                             }
                         }
                     }
-                    case SETTINGS_WAITING -> {
-                        InlineKeyboardMarkup allTemplatesKeyboard
-                                = getAllTemplatesKeyboard(userId);
-
-                        switch (text) {
-                            case CREATE_TEMPLATE_CALL_BACK -> {
-                                sendText(userId, TEMPLATE_CREATE_NAME_MESSAGE);
-                                setUserStatus(userId, TEMPLATE_CREATE_NAME_WAITING);
-                            }
-                            case CHOOSE_TEMPLATE_CALL_BACK -> {
-                                sendText(userId, SELECT_ONE_OR_MORE_OPTIONS_MESSAGE);
-                                sendKeyboard(userId, "e", allTemplatesKeyboard);
-                                setUserStatus(userId, SETTINGS_CHOOSE_TEMPLATE_WAITING);
-                            }
-                            case DELETE_TEMPLATE_CALL_BACK -> {
-                                sendText(userId, SELECT_ONE_OR_MORE_OPTIONS_MESSAGE);
-                                sendKeyboard(userId, "e", allTemplatesKeyboard);
-                                setUserStatus(userId, SETTINGS_DELETE_TEMPLATE_WAITING);
-                            }
-                            case EDIT_TEMPLATE_CALL_BACK -> {
-                                sendText(userId, SELECT_ONE_OR_MORE_OPTIONS_MESSAGE);
-                                sendKeyboard(userId, "e", allTemplatesKeyboard);
-                                setUserStatus(userId, SETTINGS_EDIT_TEMPLATE_WAITING);
-                            }
-                            case BACK_TO_MENU_CALL_BACK -> {
-                                setUserStatus(userId, MAIN_MENU_WAITING);
-
-                                int templateId = userStates.get(userId).getTemplateCreationId();
-
-                                String templateText = getTemplateTextUseCase
-                                        .getTemplateText(templateId);
-
-                                sendText(userId, templateText);
-                                sendKeyboard(userId, "Ef", MENU_KEYBOARD);
-                            }
-                            default -> {
-                                sendText(userId, "Press one of the button");
-                            }
-                        }
-                    }
                     case SETTINGS_CHOOSE_TEMPLATE_WAITING -> {
+                        if (text.equals(BACK_CALL_BACK)) {
+                            sendKeyboard(userId, SETTINGS_KEYBOARD_TEXT, SETTINGS_KEYBOARD);
+                            setUserStatus(userId, SETTINGS_WAITING);
+                            break;
+                        }
+
                         setChosenTemplateUseCase.setChosenTemplate(userId, Integer.parseInt(text));
 
-                        int templateId = userStates.get(userId).getTemplateCreationId();
-
-                        String templateText = getTemplateTextUseCase
-                                .getTemplateText(templateId);
-
-                        sendText(userId, templateText);
-                        sendKeyboard(userId, "Ef", MENU_KEYBOARD);
+                        sendMainMenuKeyboard(userId);
                         setUserStatus(userId, MAIN_MENU_WAITING);
                     }
                     case SETTINGS_DELETE_TEMPLATE_WAITING -> {
-                        deleteTemplateByIdUseCase
-                                .deleteTemplateById(Integer.parseInt(text));
+                        if (text.equals(BACK_CALL_BACK)) {
+                            sendKeyboard(userId, SETTINGS_KEYBOARD_TEXT, SETTINGS_KEYBOARD);
+                            setUserStatus(userId, SETTINGS_WAITING);
+                            break;
+                        }
 
-                        int templateId = userStates.get(userId).getTemplateCreationId();
+                        if (update.hasCallbackQuery()) {
+                            userStates.get(userId).setTemplateCreationId(Integer.parseInt(text));
 
-                        String templateText = getTemplateTextUseCase
-                                .getTemplateText(templateId);
+                            sendKeyboard(userId, "Are you sure?", CONFIRM_KEYBOARD);
+                            setUserStatus(userId, SETTINGS_DELETE_TEMPLATE_CONFIRM_WAITING);
 
-                        sendText(userId, templateText);
-                        sendKeyboard(userId, "Ef", MENU_KEYBOARD);
-                        setUserStatus(userId, MAIN_MENU_WAITING);
+                        } else {
+                            InlineKeyboardMarkup allTemplatesKeyboard
+                                    = getAllTemplatesKeyboard(userId);
+
+                            sendKeyboard(userId, "Select the one you want to delete", allTemplatesKeyboard);
+                            setUserStatus(userId, SETTINGS_DELETE_TEMPLATE_WAITING);
+                        }
+                    }
+                    case SETTINGS_DELETE_TEMPLATE_CONFIRM_WAITING -> {
+                        switch (text) {
+                            case CONFIRM_CALL_BACK -> {
+                                deleteTemplateByIdUseCase.deleteTemplateById(
+                                        userStates.get(userId).getTemplateCreationId()
+                                );
+
+                                sendMainMenuKeyboard(userId);
+                                setUserStatus(userId, MAIN_MENU_WAITING);
+                            }
+                            case CANCEL_CALL_BACK -> {
+                                sendKeyboard(userId, SETTINGS_KEYBOARD_TEXT, SETTINGS_KEYBOARD);
+                                setUserStatus(userId, SETTINGS_WAITING);
+                            }
+                            default -> {
+                                sendKeyboard(userId, "Are you sure?", CONFIRM_KEYBOARD);
+                                setUserStatus(userId, SETTINGS_DELETE_TEMPLATE_CONFIRM_WAITING);
+                            }
+                        }
                     }
                     case SETTINGS_EDIT_TEMPLATE_WAITING -> {
                         sendKeyboard(userId, "ef", EDIT_TEMPLATES_KEYBOARD);
@@ -328,7 +360,7 @@ public class BotController {
                                 .getTemplateText(templateId);
 
                         sendText(userId, templateText);
-                        sendKeyboard(userId, "Ef", MENU_KEYBOARD);
+                        sendKeyboard(userId, "Ef", MAIN_MENU_KEYBOARD);
                         setUserStatus(userId, MAIN_MENU_WAITING);
                     }
                     case EDIT_TEMPLATES_WAITING -> {
@@ -351,7 +383,7 @@ public class BotController {
                                 sendText(userId, "Choose template");
                                 setUserStatus(userId, EDIT_TEMPLATES_CHANGE_THE_TEMPLATE_NAME_WAITING);
                             }
-                            case BACK_TO_MENU_CALL_BACK -> {
+                            case BACK_CALL_BACK -> {
                                 sendKeyboard(userId, "Ef", SETTINGS_KEYBOARD);
                                 setUserStatus(userId, SETTINGS_WAITING);
                             }
@@ -370,7 +402,7 @@ public class BotController {
                         setUserStatus(userId, EDIT_TEMPLATES_ADD_CONTACT_CREATE_CONTACT_NAME_WAITING);
                     }
                     case EDIT_TEMPLATES_ADD_CONTACT_CREATE_CONTACT_NAME_WAITING -> {
-                        if (text.matches("\\W{1,16}") &&
+                        if (text.matches("\\w{1,16}") &&
                                 message.isUserMessage()) {
                             int contactId = createIncompleteContactUseCase
                                     .createIncompleteContact(text);
@@ -385,8 +417,7 @@ public class BotController {
                         }
                     }
                     case EDIT_TEMPLATES_ADD_CONTACT_CREATE_CONTACT_EMAIL_WAITING -> {
-                        if (text.matches("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,6}$") &&
-                                message.isUserMessage()) {
+                        if (text.matches("\\w+@\\w+")) {
                             int contactId = userStates.get(userId).getContactCreationId();
 
                             setContactEmailUseCase
@@ -400,8 +431,7 @@ public class BotController {
                         }
                     }
                     case EDIT_TEMPLATES_ADD_CONTACT_CREATE_CONTACT_PHONE_NUMBER_WAITING -> {
-                        if (text.matches("[0-9-+ ]+") &&
-                                message.isUserMessage()) {
+                        if (text.matches("[0-9-+ ]+")) {
                             int contactId = userStates.get(userId).getContactCreationId();
 
                             int templateId = userStates.get(userId).getTemplateCreationId();
@@ -460,9 +490,47 @@ public class BotController {
                         .text(text)
                         .build();
 
-                setUserMessageIdToDelete(chatId, sendMessage.getReplyToMessageId());
-
                 execute(sendMessage);
+            }
+
+            private synchronized void sendMainMenuKeyboard(long userId) throws TelegramApiException {
+                String text = "Selected template: none";
+
+                Optional<Integer> templateIdOptional = getChosenTemplateIdUseCase
+                        .getChosenTemplateId(userId);
+
+                if (templateIdOptional.isPresent()) {
+                    int templateId = templateIdOptional.get();
+
+                    Optional<Template> templateOptional = getTemplateByIdUseCase
+                            .getTemplateById(templateId);
+
+                    if (templateOptional.isPresent()) {
+                        Template template = templateOptional.get();
+
+                        text =  String.format("Selected template: %s\n" +
+                                        "\"%s\"",
+                                template.getName(),
+                                template.getText()
+                        );
+                    }
+                }
+
+                sendKeyboard(userId, text, MAIN_MENU_KEYBOARD);
+            }
+
+            private synchronized void sendKeyboard(
+                    Long userId,
+                    String text,
+                    InlineKeyboardMarkup keyboard
+            ) throws TelegramApiException {
+                SendMessage sm = SendMessage.builder()
+                        .chatId(userId)
+                        .parseMode("HTML").text(text)
+                        .replyMarkup(keyboard)
+                        .build();
+
+                execute(sm);
             }
 
             private synchronized void setUserStatus(long userId, Status status) {
@@ -495,32 +563,10 @@ public class BotController {
                 }
             }
 
-            private synchronized void setUserMessageIdToDelete(long userId, int messageId) {
-                if (userStates.containsKey(userId)) {
-                    userStates.get(userId).setMessageIdToDelete(messageId);
-                } else {
-                    userStates.put(userId, UserCurrentStatus.builder()
-                            .messageIdToDelete(messageId)
-                            .build());
-                }
-            }
-
-            private synchronized void sendKeyboard(
-                    Long userId,
-                    String text,
-                    InlineKeyboardMarkup keyboard) throws TelegramApiException {
-                SendMessage sm = SendMessage.builder()
-                        .chatId(userId)
-                        .parseMode("HTML").text(text)
-                        .replyMarkup(keyboard)
-                        .build();
-
-                execute(sm);
-            }
-
             private synchronized InlineKeyboardMarkup getAllTemplatesKeyboard(long userId) {
                 List<Template> userTemplates = getTemplatesByOwnerIdUseCase
                         .getTemplatesByOwnerId(userId);
+
 
                 List<InlineKeyboardButton> buttonList = new ArrayList<>();
 
@@ -534,6 +580,7 @@ public class BotController {
 
                 return InlineKeyboardMarkup.builder()
                         .keyboardRow(buttonList)
+                        .keyboardRow(List.of(BACK_BUTTON))
                         .build();
             }
 

@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +18,9 @@ public class TemplatesService implements
         SetTemplateTextUseCase,
         GetTemplateTextUseCase,
         GetTemplatesByOwnerIdUseCase,
-        DeleteTemplateByIdUseCase {
+        DeleteTemplateByIdUseCase,
+        GetTemplateByIdUseCase,
+        GetInfoTemplateExistsByNameAndOwnerIdUseCase {
 
     @Autowired
     private final TemplatesRepository templatesRepo;
@@ -47,5 +51,15 @@ public class TemplatesService implements
     @Override
     public void deleteTemplateById(int templateId) {
         templatesRepo.deleteTemplateById(templateId);
+    }
+
+    @Override
+    public Optional<Template> getTemplateById(int templateId) {
+        return templatesRepo.getTemplateById(templateId);
+    }
+
+    @Override
+    public boolean getInfoTemplateExistsByNameAndOwnerId(long ownerId, String name) {
+        return templatesRepo.getCountOfTemplatesWithNameAndOwnerId(ownerId, name) != 0;
     }
 }
