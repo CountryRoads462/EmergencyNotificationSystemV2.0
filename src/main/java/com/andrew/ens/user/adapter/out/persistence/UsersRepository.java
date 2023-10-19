@@ -13,8 +13,8 @@ public interface UsersRepository extends CrudRepository<ENSUser, Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO users(first_name, last_name, id, username, number_of_templates) " +
-            "VALUES(:firstName, :lastName, :id, :username, 0) " +
+    @Query(value = "INSERT INTO users(first_name, last_name, id, username) " +
+            "VALUES(:firstName, :lastName, :id, :username) " +
             "ON CONFLICT DO NOTHING", nativeQuery = true)
     void createUser(String firstName, String lastName, long id, String username);
 
