@@ -2,7 +2,6 @@ package com.andrew.ens.template.adapter.out.persistence;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Getter;
 
 @Entity

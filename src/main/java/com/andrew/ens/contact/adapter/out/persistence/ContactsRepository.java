@@ -3,7 +3,6 @@ package com.andrew.ens.contact.adapter.out.persistence;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +62,4 @@ public interface ContactsRepository extends CrudRepository<Contact, Integer> {
     @Query(value = "SELECT COUNT(*) FROM contacts " +
             "WHERE phone_number = :phoneNumber AND template_id = :templateId", nativeQuery = true)
     int getNumberOfContactsWithPhoneNumberAndTemplateId(String phoneNumber, int templateId);
-
-
 }

@@ -8,12 +8,6 @@ import static com.andrew.ens.bot.BotButtons.*;
 
 public class BotKeyboards {
 
-    public final static InlineKeyboardMarkup CREATE_TEMPLATE_KEYBOARD
-            = InlineKeyboardMarkup.builder()
-            .keyboardRow(List.of(CREATE_TEMPLATE_BUTTON))
-            .keyboardRow(List.of(ADD_CONTACT_BUTTON))
-            .build();
-
     public final static InlineKeyboardMarkup CANCEL_KEYBOARD
             = InlineKeyboardMarkup.builder()
             .keyboardRow(List.of(CANCEL_BUTTON))

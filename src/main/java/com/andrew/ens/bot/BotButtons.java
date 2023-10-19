@@ -1,6 +1,6 @@
 package com.andrew.ens.bot;
 
-import com.andrew.ens.bot.buttons.*;
+import com.andrew.ens.bot.buttons.CallBackData;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -20,7 +20,6 @@ public class BotButtons {
             .text("Settings")
             .callbackData(CallBackData.SETTINGS_CALL_BACK)
             .build();
-
 
     public static final InlineKeyboardButton CREATE_TEMPLATE_BUTTON
             = InlineKeyboardButton.builder()

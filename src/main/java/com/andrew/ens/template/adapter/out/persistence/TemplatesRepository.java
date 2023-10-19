@@ -3,7 +3,6 @@ package com.andrew.ens.template.adapter.out.persistence;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +22,6 @@ public interface TemplatesRepository extends CrudRepository<Template, Integer> {
             "VALUES(:name, :ownerId) " +
             "RETURNING id", nativeQuery = true)
     int createIncompleteTemplate(String name, long ownerId);
-
-    @Query(value = "SELECT text FROM templates WHERE template_id = :templateId", nativeQuery = true)
-    String getTemplateText(int templateId);
 
     @Query(value = "SELECT * FROM templates " +
             "WHERE owner_id = :ownerId", nativeQuery = true)

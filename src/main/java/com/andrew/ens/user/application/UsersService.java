@@ -1,7 +1,9 @@
 package com.andrew.ens.user.application;
 
 import com.andrew.ens.user.adapter.out.persistence.UsersRepository;
-import com.andrew.ens.user.application.port.in.*;
+import com.andrew.ens.user.application.port.in.CreateUserUseCase;
+import com.andrew.ens.user.application.port.in.GetChosenTemplateIdUseCase;
+import com.andrew.ens.user.application.port.in.SetChosenTemplateUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
