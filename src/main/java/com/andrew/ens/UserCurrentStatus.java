@@ -13,4 +13,5 @@ public class UserCurrentStatus {
     private Status status;
     private Integer templateCreationId;
     private int contactCreationId;
+    private boolean readyToSend;
 }

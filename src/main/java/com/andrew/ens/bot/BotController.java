@@ -4,6 +4,7 @@ import com.andrew.ens.Status;
 import com.andrew.ens.UserCurrentStatus;
 import com.andrew.ens.contact.adapter.out.persistence.Contact;
 import com.andrew.ens.contact.application.port.in.*;
+import com.andrew.ens.google_smtp.application.port.in.SendEmailUseCase;
 import com.andrew.ens.template.adapter.out.persistence.Template;
 import com.andrew.ens.template.application.port.in.*;
 import com.andrew.ens.user.application.port.in.CreateUserUseCase;
@@ -63,6 +64,8 @@ public class BotController {
     private final GetInfoContactExistsByNameAndTemplateIdUseCase getInfoContactExistsByNameAndTemplateIdUseCase;
     private final SetContactTemplateIdUseCase setContactTemplateIdUseCase;
 
+    private final SendEmailUseCase sendEmailUseCase;
+
     private final ConcurrentHashMap<Long, UserCurrentStatus> userStates = new ConcurrentHashMap<>();
 
     @Bean
@@ -116,8 +119,14 @@ public class BotController {
                     case MAIN_MENU_WAITING -> {
                         switch (text) {
                             case SEND_EMERGENCY_MESSAGE_CALL_BACK -> {
-                                sendText(userId, "Send emergency message");
-                                sendMainMenuKeyboard(userId);
+                                if (userStates.get(userId).isReadyToSend()) {
+                                    sendKeyboard(userId, "Are you sure?", CONFIRM_KEYBOARD);
+                                    setUserStatus(userId, MAIN_MENU_SEND_EMERGENCY_MESSAGE_WAITING);
+
+                                } else {
+                                    sendText(userId, "You have to choose a template");
+                                    sendMainMenuKeyboard(userId);
+                                }
                             }
                             case SETTINGS_CALL_BACK -> {
                                 sendKeyboard(userId, SETTINGS_KEYBOARD_TEXT, SETTINGS_KEYBOARD);
@@ -152,6 +161,51 @@ public class BotController {
                                 setUserStatus(userId, MAIN_MENU_WAITING);
                             }
                             default -> sendKeyboard(userId, SETTINGS_KEYBOARD_TEXT, SETTINGS_KEYBOARD);
+                        }
+                    }
+                    case MAIN_MENU_SEND_EMERGENCY_MESSAGE_WAITING -> {
+                        switch (text) {
+                            case CONFIRM_CALL_BACK -> {
+                                Optional<Integer> templateIdOptional = getChosenTemplateIdUseCase
+                                        .getChosenTemplateId(userId);
+
+                                if (templateIdOptional.isPresent()) {
+                                    Optional<Template> templateOptional = getTemplateByIdUseCase
+                                            .getTemplateById(templateIdOptional.get());
+
+                                    if (templateOptional.isPresent()) {
+                                        Template template = templateOptional.get();
+
+                                        String templateName = template.getName();
+                                        String templateText = template.getText();
+
+                                        getAllContactsByTemplateIdUseCase
+                                                .getAllContactsByTemplateId(template.getId())
+                                                .stream()
+                                                .map(Contact::getEmail)
+                                                        .forEach(email -> {
+                                                            sendEmailUseCase.sendEmail(
+                                                                    templateName,
+                                                                    templateText,
+                                                                    email
+                                                            );
+                                                        });
+
+                                        sendText(userId, "Emails have been sent successfully");
+                                    }
+                                }
+
+                                sendMainMenuKeyboard(userId);
+                                setUserStatus(userId, MAIN_MENU_WAITING);
+                            }
+                            case CANCEL_CALL_BACK -> {
+                                sendMainMenuKeyboard(userId);
+                                setUserStatus(userId, MAIN_MENU_WAITING);
+                            }
+                            default -> {
+                                sendKeyboard(userId, "Are you sure?", CONFIRM_KEYBOARD);
+                                setUserStatus(userId, MAIN_MENU_SEND_EMERGENCY_MESSAGE_WAITING);
+                            }
                         }
                     }
                     case SETTINGS_EDIT_TEMPLATE_CHOSE_TEMPLATE_WAITING -> {
@@ -511,6 +565,8 @@ public class BotController {
                 Optional<Integer> templateIdOptional = getChosenTemplateIdUseCase
                         .getChosenTemplateId(userId);
 
+                userStates.get(userId).setReadyToSend(false);
+
                 if (templateIdOptional.isPresent()) {
                     int templateId = templateIdOptional.get();
 
@@ -529,6 +585,8 @@ public class BotController {
                                 numberOfContacts,
                                 template.getText()
                         );
+
+                        userStates.get(userId).setReadyToSend(true);
                     }
                 }
 
