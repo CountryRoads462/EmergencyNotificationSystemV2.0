@@ -17,7 +17,11 @@ public class ContactsService implements
         SetContactPhoneNumberUseCase,
         DeleteAllContactsUseCase,
         GetAllContactsByTemplateIdUseCase,
-        DeleteContactByIdUseCase {
+        DeleteContactByIdUseCase,
+        GetInfoContactExistsByNameAndTemplateIdUseCase,
+        GetInfoContactExistsByEmailAndTemplateIdUseCase,
+        GetInfoContactExistsByPhoneNumberAndTemplateIdUseCase,
+        SetContactTemplateIdUseCase {
 
     @Autowired
     private final ContactsRepository contactsRepo;
@@ -50,5 +54,25 @@ public class ContactsService implements
     @Override
     public void deleteContactById(int contactId) {
         contactsRepo.deleteContactById(contactId);
+    }
+
+    @Override
+    public boolean getInfoContactExistsByNameAndTemplateId(String name, int templateId) {
+        return contactsRepo.getNumberOfContactsWithNameAndTemplateId(name, templateId) != 0;
+    }
+
+    @Override
+    public boolean getInfoContactExistsByEmailAndTemplateId(String email, int templateId) {
+        return contactsRepo.getNumberOfContactsWithEmailAndTemplateId(email, templateId) != 0;
+    }
+
+    @Override
+    public boolean getInfoContactExistsByPhoneNumberAndTemplateId(String phoneNumber, int templateId) {
+        return contactsRepo.getNumberOfContactsWithPhoneNumberAndTemplateId(phoneNumber, templateId) != 0;
+    }
+
+    @Override
+    public void setContactTemplateId(int contactId, int templateId) {
+        contactsRepo.setContactTemplateId(contactId, templateId);
     }
 }

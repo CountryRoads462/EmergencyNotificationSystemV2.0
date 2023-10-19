@@ -8,7 +8,6 @@ import lombok.Getter;
 
 @Entity
 @Getter
-@Builder
 @Table(name = "contacts")
 public class Contact {
 

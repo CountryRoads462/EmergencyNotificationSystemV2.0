@@ -22,6 +22,13 @@ public interface ContactsRepository extends CrudRepository<Contact, Integer> {
     @Modifying
     @Transactional
     @Query(value = "UPDATE contacts " +
+            "SET template_id = :templateId " +
+            "WHERE id = :contactId", nativeQuery = true)
+    void setContactTemplateId(int contactId, int templateId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE contacts " +
             "SET phone_number = :phoneNumber " +
             "WHERE id= :contactId", nativeQuery = true)
     void setContactPhoneNumber(int contactId, String phoneNumber);
@@ -44,4 +51,18 @@ public interface ContactsRepository extends CrudRepository<Contact, Integer> {
     @Transactional
     @Query(value = "DELETE FROM contacts WHERE id = :contactId", nativeQuery = true)
     void deleteContactById(int contactId);
+
+    @Query(value = "SELECT COUNT(*) FROM contacts " +
+            "WHERE name = :name AND template_id = :templateId", nativeQuery = true)
+    int getNumberOfContactsWithNameAndTemplateId(String name, int templateId);
+
+    @Query(value = "SELECT COUNT(*) FROM contacts " +
+            "WHERE email = :email AND template_id = :templateId", nativeQuery = true)
+    int getNumberOfContactsWithEmailAndTemplateId(String email, int templateId);
+
+    @Query(value = "SELECT COUNT(*) FROM contacts " +
+            "WHERE phone_number = :phoneNumber AND template_id = :templateId", nativeQuery = true)
+    int getNumberOfContactsWithPhoneNumberAndTemplateId(String phoneNumber, int templateId);
+
+
 }

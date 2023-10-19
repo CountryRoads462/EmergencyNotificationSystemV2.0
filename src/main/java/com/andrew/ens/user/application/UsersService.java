@@ -14,8 +14,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UsersService implements
         CreateUserUseCase,
-        GetInfoUserHasAnyTemplatesUseCase,
-        GetInfoUserHasChosenTemplateUseCase,
         SetChosenTemplateUseCase,
         GetChosenTemplateIdUseCase {
 
@@ -37,16 +35,6 @@ public class UsersService implements
                 user.getId(),
                 user.getUserName()
         );
-    }
-
-    @Override
-    public boolean userHasAnyTemplates(long userId) {
-        return usersRepo.getNumberOfTemplatesById(userId) != 0;
-    }
-
-    @Override
-    public boolean userHasChosenTemplate(long userId) {
-        return usersRepo.userHasChosenTemplate(userId) != null;
     }
 
     @Override

@@ -42,4 +42,11 @@ public interface TemplatesRepository extends CrudRepository<Template, Integer> {
     @Query(value = "SELECT COUNT(*) FROM templates " +
             "WHERE owner_id = :ownerId AND name = :name", nativeQuery = true)
     int getCountOfTemplatesWithNameAndOwnerId(long ownerId, String name);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE templates " +
+            "SET name = :newName " +
+            "WHERE id = :templateId", nativeQuery = true)
+    void setTemplateNameByTemplateId(int templateId, String newName);
 }

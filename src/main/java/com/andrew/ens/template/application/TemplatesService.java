@@ -16,11 +16,11 @@ import java.util.Optional;
 public class TemplatesService implements
         CreateIncompleteTemplateUseCase,
         SetTemplateTextUseCase,
-        GetTemplateTextUseCase,
         GetTemplatesByOwnerIdUseCase,
         DeleteTemplateByIdUseCase,
         GetTemplateByIdUseCase,
-        GetInfoTemplateExistsByNameAndOwnerIdUseCase {
+        GetInfoTemplateExistsByNameAndOwnerIdUseCase,
+        SetTemplateNameByTemplateIdUseCase {
 
     @Autowired
     private final TemplatesRepository templatesRepo;
@@ -36,11 +36,6 @@ public class TemplatesService implements
     @Override
     public void setTemplateText(int templateId, String text) {
         templatesRepo.setText(text, templateId);
-    }
-
-    @Override
-    public String getTemplateText(int templateId) {
-        return templatesRepo.getTemplateText(templateId);
     }
 
     @Override
@@ -61,5 +56,10 @@ public class TemplatesService implements
     @Override
     public boolean getInfoTemplateExistsByNameAndOwnerId(long ownerId, String name) {
         return templatesRepo.getCountOfTemplatesWithNameAndOwnerId(ownerId, name) != 0;
+    }
+
+    @Override
+    public void setTemplateNameByTemplateId(int templateId, String newName) {
+        templatesRepo.setTemplateNameByTemplateId(templateId, newName);
     }
 }
