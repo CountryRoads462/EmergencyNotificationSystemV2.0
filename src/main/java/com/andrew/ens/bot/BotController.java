@@ -351,6 +351,10 @@ public class BotController {
                                 sendKeyboard(userId, "Enter new name", CANCEL_KEYBOARD);
                                 setUserStatus(userId, EDIT_TEMPLATES_CHANGE_THE_TEMPLATE_NAME_WAITING);
                             }
+                            case CHANGE_THE_TEMPLATE_TEXT_CALL_BACK -> {
+                                sendKeyboard(userId, "Enter new text", CANCEL_KEYBOARD);
+                                setUserStatus(userId, EDIT_TEMPLATES_CHANGE_THE_TEMPLATE_TEXT_WAITING);
+                            }
                             case BACK_CALL_BACK -> {
                                 sendKeyboard(userId, SETTINGS_KEYBOARD_TEXT, SETTINGS_KEYBOARD);
                                 setUserStatus(userId, SETTINGS_WAITING);
@@ -543,6 +547,27 @@ public class BotController {
 
                         } else {
                             sendKeyboard(userId, TEMPLATE_CREATE_NAME_MESSAGE, CANCEL_KEYBOARD);
+                        }
+                    }
+                    case EDIT_TEMPLATES_CHANGE_THE_TEMPLATE_TEXT_WAITING -> {
+                        if (text.equals(CANCEL_CALL_BACK)) {
+                            sendKeyboard(userId, "Edit template", EDIT_TEMPLATES_KEYBOARD);
+                            setUserStatus(userId, EDIT_TEMPLATES_WAITING);
+                            break;
+                        }
+
+                        if (text.matches(".{1,128}")) {
+                            int templateId = userStates.get(userId).getTemplateCreationId();
+
+                            setTemplateTextUseCase
+                                    .setTemplateText(templateId, text);
+
+                            sendText(userId, "Text changed successfully");
+                            sendKeyboard(userId, "Edit template", EDIT_TEMPLATES_KEYBOARD);
+                            setUserStatus(userId, EDIT_TEMPLATES_WAITING);
+
+                        } else {
+                            sendKeyboard(userId, TEMPLATE_CREATE_TEXT_MESSAGE, CANCEL_KEYBOARD);
                         }
                     }
                     default -> {

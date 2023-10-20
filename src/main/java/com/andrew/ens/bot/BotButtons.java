@@ -86,4 +86,10 @@ public class BotButtons {
             .text("Change the template name")
             .callbackData(CallBackData.CHANGE_THE_TEMPLATE_NAME_CALL_BACK)
             .build();
+
+    public static final InlineKeyboardButton CHANGE_THE_TEMPLATE_TEXT_BUTTON
+            = InlineKeyboardButton.builder()
+            .text("Change the template text")
+            .callbackData(CallBackData.CHANGE_THE_TEMPLATE_TEXT_CALL_BACK)
+            .build();
 }

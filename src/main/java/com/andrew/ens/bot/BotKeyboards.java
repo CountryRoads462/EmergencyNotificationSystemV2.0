@@ -40,6 +40,7 @@ public class BotKeyboards {
             .keyboardRow(List.of(DELETE_CONTACT_BUTTON))
             .keyboardRow(List.of(DELETE_ALL_CONTACTS_BUTTON))
             .keyboardRow(List.of(CHANGE_THE_TEMPLATE_NAME_BUTTON))
+            .keyboardRow(List.of(CHANGE_THE_TEMPLATE_TEXT_BUTTON))
             .keyboardRow(List.of(BACK_BUTTON))
             .build();
 }
