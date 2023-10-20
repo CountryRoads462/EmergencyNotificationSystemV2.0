@@ -4,7 +4,9 @@ import com.andrew.ens.bot.buttons.CallBackData;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import static com.andrew.ens.bot.buttons.CallBackData.*;
+import static com.andrew.ens.bot.buttons.CallBackData.CANCEL_CALL_BACK;
+import static com.andrew.ens.bot.buttons.CallBackData.CONFIRM_CALL_BACK;
+import static com.andrew.ens.bot.buttons.CallBackData.CREATE_TEMPLATE_CALL_BACK;
 
 @Component
 public class BotButtons {
@@ -57,7 +59,7 @@ public class BotButtons {
             .callbackData(CallBackData.EDIT_TEMPLATE_CALL_BACK)
             .build();
 
-    public final static InlineKeyboardButton BACK_BUTTON
+    public static final InlineKeyboardButton BACK_BUTTON
             = InlineKeyboardButton.builder()
             .text("Back")
             .callbackData(CallBackData.BACK_CALL_BACK)

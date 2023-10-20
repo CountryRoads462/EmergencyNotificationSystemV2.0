@@ -18,13 +18,13 @@ public interface TemplatesRepository extends CrudRepository<Template, Integer> {
     void setText(String text, int templateId);
 
     @Transactional
-    @Query(value = "INSERT INTO templates(name, owner_id) " +
-            "VALUES(:name, :ownerId) " +
-            "RETURNING id", nativeQuery = true)
+    @Query(value = "INSERT INTO templates(name, owner_id) "
+            + "VALUES(:name, :ownerId) "
+            + "RETURNING id", nativeQuery = true)
     int createIncompleteTemplate(String name, long ownerId);
 
-    @Query(value = "SELECT * FROM templates " +
-            "WHERE owner_id = :ownerId", nativeQuery = true)
+    @Query(value = "SELECT * FROM templates "
+            + "WHERE owner_id = :ownerId", nativeQuery = true)
     List<Template> getTemplatesByOwnerId(long ownerId);
 
     @Modifying
@@ -35,14 +35,14 @@ public interface TemplatesRepository extends CrudRepository<Template, Integer> {
     @Query(value = "SELECT * FROM templates WHERE id = :templateId", nativeQuery = true)
     Optional<Template> getTemplateById(int templateId);
 
-    @Query(value = "SELECT COUNT(*) FROM templates " +
-            "WHERE owner_id = :ownerId AND name = :name", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM templates "
+            + "WHERE owner_id = :ownerId AND name = :name", nativeQuery = true)
     int getCountOfTemplatesWithNameAndOwnerId(long ownerId, String name);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE templates " +
-            "SET name = :newName " +
-            "WHERE id = :templateId", nativeQuery = true)
+    @Query(value = "UPDATE templates "
+            + "SET name = :newName "
+            + "WHERE id = :templateId", nativeQuery = true)
     void setTemplateNameByTemplateId(int templateId, String newName);
 }

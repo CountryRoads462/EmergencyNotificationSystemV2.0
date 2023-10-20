@@ -2,7 +2,13 @@ package com.andrew.ens.template.application;
 
 import com.andrew.ens.template.adapter.out.persistence.Template;
 import com.andrew.ens.template.adapter.out.persistence.TemplatesRepository;
-import com.andrew.ens.template.application.port.in.*;
+import com.andrew.ens.template.application.port.in.CreateIncompleteTemplateUseCase;
+import com.andrew.ens.template.application.port.in.DeleteTemplateByIdUseCase;
+import com.andrew.ens.template.application.port.in.GetInfoTemplateExistsByNameAndOwnerIdUseCase;
+import com.andrew.ens.template.application.port.in.GetTemplateByIdUseCase;
+import com.andrew.ens.template.application.port.in.GetTemplatesByOwnerIdUseCase;
+import com.andrew.ens.template.application.port.in.SetTemplateNameByTemplateIdUseCase;
+import com.andrew.ens.template.application.port.in.SetTemplateTextUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
