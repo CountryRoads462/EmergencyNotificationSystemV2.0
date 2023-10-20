@@ -4,28 +4,39 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 
 import java.util.List;
 
-import static com.andrew.ens.bot.BotButtons.*;
+import static com.andrew.ens.bot.BotButtons.ADD_CONTACT_BUTTON;
+import static com.andrew.ens.bot.BotButtons.BACK_BUTTON;
+import static com.andrew.ens.bot.BotButtons.CANCEL_BUTTON;
+import static com.andrew.ens.bot.BotButtons.CHANGE_THE_TEMPLATE_NAME_BUTTON;
+import static com.andrew.ens.bot.BotButtons.CHANGE_THE_TEMPLATE_TEXT_BUTTON;
+import static com.andrew.ens.bot.BotButtons.CHOOSE_TEMPLATE_BUTTON;
+import static com.andrew.ens.bot.BotButtons.CONFIRM_BUTTON;
+import static com.andrew.ens.bot.BotButtons.CREATE_TEMPLATE_BUTTON;
+import static com.andrew.ens.bot.BotButtons.DELETE_ALL_CONTACTS_BUTTON;
+import static com.andrew.ens.bot.BotButtons.DELETE_CONTACT_BUTTON;
+import static com.andrew.ens.bot.BotButtons.DELETE_TEMPLATE_BUTTON;
+import static com.andrew.ens.bot.BotButtons.EDIT_TEMPLATE_BUTTON;
 
 public class BotKeyboards {
 
-    public final static InlineKeyboardMarkup CANCEL_KEYBOARD
+    public static final InlineKeyboardMarkup CANCEL_KEYBOARD
             = InlineKeyboardMarkup.builder()
             .keyboardRow(List.of(CANCEL_BUTTON))
             .build();
 
-    public final static InlineKeyboardMarkup CONFIRM_KEYBOARD
+    public static final InlineKeyboardMarkup CONFIRM_KEYBOARD
             = InlineKeyboardMarkup.builder()
             .keyboardRow(List.of(CONFIRM_BUTTON))
             .keyboardRow(List.of(CANCEL_BUTTON))
             .build();
 
-    public final static InlineKeyboardMarkup MAIN_MENU_KEYBOARD
+    public static final InlineKeyboardMarkup MAIN_MENU_KEYBOARD
             = InlineKeyboardMarkup.builder()
             .keyboardRow(List.of(BotButtons.SEND_EMERGENCY_MESSAGE))
             .keyboardRow(List.of(BotButtons.SETTING_BUTTON))
             .build();
 
-    public final static InlineKeyboardMarkup SETTINGS_KEYBOARD
+    public static final InlineKeyboardMarkup SETTINGS_KEYBOARD
             = InlineKeyboardMarkup.builder()
             .keyboardRow(List.of(CREATE_TEMPLATE_BUTTON))
             .keyboardRow(List.of(CHOOSE_TEMPLATE_BUTTON))
@@ -34,7 +45,7 @@ public class BotKeyboards {
             .keyboardRow(List.of(BACK_BUTTON))
             .build();
 
-    public final static InlineKeyboardMarkup EDIT_TEMPLATES_KEYBOARD
+    public static final InlineKeyboardMarkup EDIT_TEMPLATES_KEYBOARD
             = InlineKeyboardMarkup.builder()
             .keyboardRow(List.of(ADD_CONTACT_BUTTON))
             .keyboardRow(List.of(DELETE_CONTACT_BUTTON))

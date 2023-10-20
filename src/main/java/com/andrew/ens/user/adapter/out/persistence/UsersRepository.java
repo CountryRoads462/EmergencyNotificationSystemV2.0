@@ -9,20 +9,20 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Repository
-public interface UsersRepository extends CrudRepository<ENSUser, Long> {
+public interface UsersRepository extends CrudRepository<EnsUser, Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO users(first_name, last_name, id, username) " +
-            "VALUES(:firstName, :lastName, :id, :username) " +
-            "ON CONFLICT DO NOTHING", nativeQuery = true)
+    @Query(value = "INSERT INTO users(first_name, last_name, id, username) "
+            + "VALUES(:firstName, :lastName, :id, :username) "
+            + "ON CONFLICT DO NOTHING", nativeQuery = true)
     void createUser(String firstName, String lastName, long id, String username);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE users " +
-            "SET chosen_template_id = :templateId " +
-            "WHERE id = :userId", nativeQuery = true)
+    @Query(value = "UPDATE users "
+            + "SET chosen_template_id = :templateId "
+            + "WHERE id = :userId", nativeQuery = true)
     void setChosenTemplate(long userId, int templateId);
 
     @Query(value = "SELECT chosen_template_id FROM users WHERE id = :userId", nativeQuery = true)

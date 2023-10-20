@@ -11,7 +11,7 @@ import lombok.Builder;
 @Entity
 @Builder
 @Table(name = "users")
-public class ENSUser {
+public class EnsUser {
 
     @Id
     @NotNull

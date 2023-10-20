@@ -2,7 +2,16 @@ package com.andrew.ens.contact.application;
 
 import com.andrew.ens.contact.adapter.out.persistence.Contact;
 import com.andrew.ens.contact.adapter.out.persistence.ContactsRepository;
-import com.andrew.ens.contact.application.port.in.*;
+import com.andrew.ens.contact.application.port.in.CreateIncompleteContactUseCase;
+import com.andrew.ens.contact.application.port.in.DeleteAllContactsUseCase;
+import com.andrew.ens.contact.application.port.in.DeleteContactByIdUseCase;
+import com.andrew.ens.contact.application.port.in.GetAllContactsByTemplateIdUseCase;
+import com.andrew.ens.contact.application.port.in.GetInfoContactExistsByEmailAndTemplateIdUseCase;
+import com.andrew.ens.contact.application.port.in.GetInfoContactExistsByNameAndTemplateIdUseCase;
+import com.andrew.ens.contact.application.port.in.GetInfoContactExistsByPhoneNumberAndTemplateIdUseCase;
+import com.andrew.ens.contact.application.port.in.SetContactEmailUseCase;
+import com.andrew.ens.contact.application.port.in.SetContactPhoneNumberUseCase;
+import com.andrew.ens.contact.application.port.in.SetContactTemplateIdUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,8 +76,12 @@ public class ContactsService implements
     }
 
     @Override
-    public boolean getInfoContactExistsByPhoneNumberAndTemplateId(String phoneNumber, int templateId) {
-        return contactsRepo.getNumberOfContactsWithPhoneNumberAndTemplateId(phoneNumber, templateId) != 0;
+    public boolean getInfoContactExistsByPhoneNumberAndTemplateId(
+            String phoneNumber,
+            int templateId
+    ) {
+        return contactsRepo
+                .getNumberOfContactsWithPhoneNumberAndTemplateId(phoneNumber, templateId) != 0;
     }
 
     @Override
