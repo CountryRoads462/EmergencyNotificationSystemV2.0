@@ -1,4 +1,4 @@
-package com.andrew.ens.bot;
+package com.andrew.ens.bot.adapter.out;
 
 public class BotMessages {
     public static final String TEMPLATE_CREATE_NAME_MESSAGE = "Enter the name of the template";
