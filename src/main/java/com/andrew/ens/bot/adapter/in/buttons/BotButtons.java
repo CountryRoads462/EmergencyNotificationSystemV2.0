@@ -1,11 +1,11 @@
-package com.andrew.ens.bot.adapter.out.buttons;
+package com.andrew.ens.bot.adapter.in.buttons;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.CANCEL_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.CONFIRM_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.CREATE_TEMPLATE_CALL_BACK;
+import static com.andrew.ens.bot.adapter.in.buttons.CallBackData.CANCEL_CALL_BACK;
+import static com.andrew.ens.bot.adapter.in.buttons.CallBackData.CONFIRM_CALL_BACK;
+import static com.andrew.ens.bot.adapter.in.buttons.CallBackData.CREATE_TEMPLATE_CALL_BACK;
 
 @Component
 public class BotButtons {

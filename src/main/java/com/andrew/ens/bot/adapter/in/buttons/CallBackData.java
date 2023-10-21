@@ -1,4 +1,4 @@
-package com.andrew.ens.bot.adapter.out.buttons;
+package com.andrew.ens.bot.adapter.in.buttons;
 
 public class CallBackData {
     public static final String ADD_CONTACT_CALL_BACK = "$add.contact";

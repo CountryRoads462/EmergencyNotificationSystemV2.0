@@ -1,4 +1,4 @@
-package com.andrew.ens.bot.adapter.out;
+package com.andrew.ens.bot.adapter.in;
 
 import com.andrew.ens.status.domain.Status;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;

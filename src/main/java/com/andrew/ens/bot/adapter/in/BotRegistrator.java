@@ -1,4 +1,4 @@
-package com.andrew.ens.bot.adapter.out;
+package com.andrew.ens.bot.adapter.in;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;

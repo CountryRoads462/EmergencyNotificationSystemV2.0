@@ -1,6 +1,5 @@
-package com.andrew.ens.bot.adapter.out;
+package com.andrew.ens.bot.adapter.in;
 
-import aj.org.objectweb.asm.Handle;
 import com.andrew.ens.contact.adapter.out.persistence.Contact;
 import com.andrew.ens.contact.application.port.in.CreateIncompleteContactUseCase;
 import com.andrew.ens.contact.application.port.in.DeleteAllContactsUseCase;
@@ -45,34 +44,29 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.andrew.ens.bot.adapter.out.BotKeyboards.CANCEL_KEYBOARD;
-import static com.andrew.ens.bot.adapter.out.BotKeyboards.CONFIRM_KEYBOARD;
-import static com.andrew.ens.bot.adapter.out.BotKeyboards.EDIT_TEMPLATES_KEYBOARD;
-import static com.andrew.ens.bot.adapter.out.BotKeyboards.MAIN_MENU_KEYBOARD;
-import static com.andrew.ens.bot.adapter.out.BotKeyboards.SETTINGS_KEYBOARD;
-import static com.andrew.ens.bot.adapter.out.BotMessages.CREATE_CONTACT_EMAIL_MESSAGE;
-import static com.andrew.ens.bot.adapter.out.BotMessages.CREATE_CONTACT_NAME_MESSAGE;
-import static com.andrew.ens.bot.adapter.out.BotMessages.CREATE_CONTACT_PHONE_NUMBER_MESSAGE;
-import static com.andrew.ens.bot.adapter.out.BotMessages.CREATE_TEMPLATE_CREATED_MESSAGE;
-import static com.andrew.ens.bot.adapter.out.BotMessages.SETTINGS_KEYBOARD_TEXT;
-import static com.andrew.ens.bot.adapter.out.BotMessages.TEMPLATE_CREATE_NAME_MESSAGE;
-import static com.andrew.ens.bot.adapter.out.BotMessages.TEMPLATE_CREATE_TEXT_MESSAGE;
-import static com.andrew.ens.bot.adapter.out.buttons.BotButtons.BACK_BUTTON;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.ADD_CONTACT_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.BACK_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.CANCEL_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.CHANGE_THE_TEMPLATE_NAME_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.CHANGE_THE_TEMPLATE_TEXT_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.CHOOSE_TEMPLATE_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.CONFIRM_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.CREATE_TEMPLATE_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.DELETE_ALL_CONTACTS_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.DELETE_CONTACT_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.DELETE_TEMPLATE_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.EDIT_TEMPLATE_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.SEND_EMERGENCY_MESSAGE_CALL_BACK;
-import static com.andrew.ens.bot.adapter.out.buttons.CallBackData.SETTINGS_CALL_BACK;
-import static com.andrew.ens.status.domain.Status.CREATE_TEMPLATE_NAME_WAITING;
+import static com.andrew.ens.bot.adapter.in.BotKeyboards.CANCEL_KEYBOARD;
+import static com.andrew.ens.bot.adapter.in.BotKeyboards.CONFIRM_KEYBOARD;
+import static com.andrew.ens.bot.adapter.in.BotKeyboards.EDIT_TEMPLATES_KEYBOARD;
+import static com.andrew.ens.bot.adapter.in.BotKeyboards.MAIN_MENU_KEYBOARD;
+import static com.andrew.ens.bot.adapter.in.BotKeyboards.SETTINGS_KEYBOARD;
+import static com.andrew.ens.bot.adapter.in.BotMessages.CREATE_CONTACT_EMAIL_MESSAGE;
+import static com.andrew.ens.bot.adapter.in.BotMessages.CREATE_CONTACT_NAME_MESSAGE;
+import static com.andrew.ens.bot.adapter.in.BotMessages.CREATE_CONTACT_PHONE_NUMBER_MESSAGE;
+import static com.andrew.ens.bot.adapter.in.BotMessages.CREATE_TEMPLATE_CREATED_MESSAGE;
+import static com.andrew.ens.bot.adapter.in.BotMessages.SETTINGS_KEYBOARD_TEXT;
+import static com.andrew.ens.bot.adapter.in.BotMessages.TEMPLATE_CREATE_NAME_MESSAGE;
+import static com.andrew.ens.bot.adapter.in.BotMessages.TEMPLATE_CREATE_TEXT_MESSAGE;
+import static com.andrew.ens.bot.adapter.in.buttons.BotButtons.BACK_BUTTON;
+import static com.andrew.ens.bot.adapter.in.buttons.CallBackData.ADD_CONTACT_CALL_BACK;
+import static com.andrew.ens.bot.adapter.in.buttons.CallBackData.BACK_CALL_BACK;
+import static com.andrew.ens.bot.adapter.in.buttons.CallBackData.CANCEL_CALL_BACK;
+import static com.andrew.ens.bot.adapter.in.buttons.CallBackData.CHANGE_THE_TEMPLATE_NAME_CALL_BACK;
+import static com.andrew.ens.bot.adapter.in.buttons.CallBackData.CHANGE_THE_TEMPLATE_TEXT_CALL_BACK;
+import static com.andrew.ens.bot.adapter.in.buttons.CallBackData.CONFIRM_CALL_BACK;
+import static com.andrew.ens.bot.adapter.in.buttons.CallBackData.DELETE_ALL_CONTACTS_CALL_BACK;
+import static com.andrew.ens.bot.adapter.in.buttons.CallBackData.DELETE_CONTACT_CALL_BACK;
+import static com.andrew.ens.bot.adapter.in.buttons.CallBackData.SEND_EMERGENCY_MESSAGE_CALL_BACK;
+import static com.andrew.ens.bot.adapter.in.buttons.CallBackData.SETTINGS_CALL_BACK;
 import static com.andrew.ens.status.domain.Status.CREATE_TEMPLATE_TEXT_WAITING;
 import static com.andrew.ens.status.domain.Status.EDIT_TEMPLATES_ADD_CONTACT_CREATE_CONTACT_EMAIL_WAITING;
 import static com.andrew.ens.status.domain.Status.EDIT_TEMPLATES_ADD_CONTACT_CREATE_CONTACT_NAME_WAITING;
@@ -85,7 +79,6 @@ import static com.andrew.ens.status.domain.Status.EDIT_TEMPLATES_DELETE_CONTACT_
 import static com.andrew.ens.status.domain.Status.EDIT_TEMPLATES_WAITING;
 import static com.andrew.ens.status.domain.Status.MAIN_MENU_SEND_EMERGENCY_MESSAGE_WAITING;
 import static com.andrew.ens.status.domain.Status.MAIN_MENU_WAITING;
-import static com.andrew.ens.status.domain.Status.SETTINGS_CHOOSE_TEMPLATE_WAITING;
 import static com.andrew.ens.status.domain.Status.SETTINGS_DELETE_TEMPLATE_CONFIRM_WAITING;
 import static com.andrew.ens.status.domain.Status.SETTINGS_DELETE_TEMPLATE_WAITING;
 import static com.andrew.ens.status.domain.Status.SETTINGS_EDIT_TEMPLATE_CHOSE_TEMPLATE_WAITING;
@@ -737,7 +730,7 @@ public class BotController extends TelegramLongPollingBot {
         execute(sendMessage);
     }
 
-    synchronized void sendMainMenuKeyboard(
+    public synchronized void sendMainMenuKeyboard(
             long userId
     ) throws TelegramApiException {
         String text = "Selected template: none";

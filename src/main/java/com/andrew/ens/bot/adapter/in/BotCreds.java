@@ -1,4 +1,4 @@
-package com.andrew.ens.bot.adapter.out;
+package com.andrew.ens.bot.adapter.in;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
