@@ -1,4 +1,4 @@
-package com.andrew.ens;
+package com.andrew.ens.status.domain;
 
 import lombok.Builder;
 import lombok.Getter;

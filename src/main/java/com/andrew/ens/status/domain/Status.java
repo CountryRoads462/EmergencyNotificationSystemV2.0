@@ -1,4 +1,4 @@
-package com.andrew.ens;
+package com.andrew.ens.status.domain;
 
 public enum Status {
     CREATE_TEMPLATE_NAME_WAITING,

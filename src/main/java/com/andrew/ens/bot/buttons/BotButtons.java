@@ -1,4 +1,4 @@
-package com.andrew.ens.bot;
+package com.andrew.ens.bot.buttons;
 
 import com.andrew.ens.bot.buttons.CallBackData;
 import org.springframework.stereotype.Component;
