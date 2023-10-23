@@ -9,4 +9,4 @@ A user has the ability to craft a message template and subsequently include mult
 ## Authors
 
 Kamagin Andrey
-[@CountryRoads462](https://t.me/kamaginAndrey)
+[Telegram](https://t.me/kamaginAndrey)
