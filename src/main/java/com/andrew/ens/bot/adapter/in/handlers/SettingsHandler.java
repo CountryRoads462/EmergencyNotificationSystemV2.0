@@ -1,7 +1,10 @@
-package com.andrew.ens.bot.adapter.in;
+package com.andrew.ens.bot.adapter.in.handlers;
 
+import com.andrew.ens.bot.adapter.in.BotController;
+import com.andrew.ens.bot.adapter.in.BotHandler;
 import com.andrew.ens.status.domain.Status;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -22,13 +25,19 @@ import static com.andrew.ens.status.domain.Status.SETTINGS_EDIT_TEMPLATE_CHOSE_T
 
 @Component
 public class SettingsHandler implements BotHandler {
+
     @Override
     public Status getStatus() {
         return Status.SETTINGS_WAITING;
     }
 
     @Override
-    public void execAction(BotController bot, Long userId, String text) throws TelegramApiException {
+    public void execAction(
+            Update update,
+            BotController bot,
+            Long userId,
+            String text
+    ) throws TelegramApiException {
         InlineKeyboardMarkup allTemplatesKeyboard
                 = bot.getAllTemplatesKeyboard(userId);
 
