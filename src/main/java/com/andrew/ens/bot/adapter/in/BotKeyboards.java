@@ -1,22 +1,22 @@
-package com.andrew.ens.bot;
+package com.andrew.ens.bot.adapter.in;
 
-import com.andrew.ens.bot.buttons.BotButtons;
+import com.andrew.ens.bot.adapter.in.buttons.BotButtons;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.util.List;
 
-import static com.andrew.ens.bot.buttons.BotButtons.ADD_CONTACT_BUTTON;
-import static com.andrew.ens.bot.buttons.BotButtons.BACK_BUTTON;
-import static com.andrew.ens.bot.buttons.BotButtons.CANCEL_BUTTON;
-import static com.andrew.ens.bot.buttons.BotButtons.CHANGE_THE_TEMPLATE_NAME_BUTTON;
-import static com.andrew.ens.bot.buttons.BotButtons.CHANGE_THE_TEMPLATE_TEXT_BUTTON;
-import static com.andrew.ens.bot.buttons.BotButtons.CHOOSE_TEMPLATE_BUTTON;
-import static com.andrew.ens.bot.buttons.BotButtons.CONFIRM_BUTTON;
-import static com.andrew.ens.bot.buttons.BotButtons.CREATE_TEMPLATE_BUTTON;
-import static com.andrew.ens.bot.buttons.BotButtons.DELETE_ALL_CONTACTS_BUTTON;
-import static com.andrew.ens.bot.buttons.BotButtons.DELETE_CONTACT_BUTTON;
-import static com.andrew.ens.bot.buttons.BotButtons.DELETE_TEMPLATE_BUTTON;
-import static com.andrew.ens.bot.buttons.BotButtons.EDIT_TEMPLATE_BUTTON;
+import static com.andrew.ens.bot.adapter.in.buttons.BotButtons.ADD_CONTACT_BUTTON;
+import static com.andrew.ens.bot.adapter.in.buttons.BotButtons.BACK_BUTTON;
+import static com.andrew.ens.bot.adapter.in.buttons.BotButtons.CANCEL_BUTTON;
+import static com.andrew.ens.bot.adapter.in.buttons.BotButtons.CHANGE_THE_TEMPLATE_NAME_BUTTON;
+import static com.andrew.ens.bot.adapter.in.buttons.BotButtons.CHANGE_THE_TEMPLATE_TEXT_BUTTON;
+import static com.andrew.ens.bot.adapter.in.buttons.BotButtons.CHOOSE_TEMPLATE_BUTTON;
+import static com.andrew.ens.bot.adapter.in.buttons.BotButtons.CONFIRM_BUTTON;
+import static com.andrew.ens.bot.adapter.in.buttons.BotButtons.CREATE_TEMPLATE_BUTTON;
+import static com.andrew.ens.bot.adapter.in.buttons.BotButtons.DELETE_ALL_CONTACTS_BUTTON;
+import static com.andrew.ens.bot.adapter.in.buttons.BotButtons.DELETE_CONTACT_BUTTON;
+import static com.andrew.ens.bot.adapter.in.buttons.BotButtons.DELETE_TEMPLATE_BUTTON;
+import static com.andrew.ens.bot.adapter.in.buttons.BotButtons.EDIT_TEMPLATE_BUTTON;
 
 public class BotKeyboards {
 
